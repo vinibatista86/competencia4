@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .question {
+            margin: 20px;
+        }
+        .hidden {
+            display: none;
+        }
+        .button {
+            margin: 5px;
+            padding: 10px;
+            cursor: pointer;
+        }
+        #resultado {
+            font-weight: bold;
+            margin: 20px;
+            padding: 20px;
+            border: 2px solid #4CAF50;
+            border-radius: 5px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="inicio" class="question">
+        <p>Há presença de conjunções e nexos no texto de forma regular?</p>
+        <button class="button" onclick="responder('inicio', 'sim', 'recuo')">SIM</button>
+        <button class="button" onclick="responder('inicio', 'nao', 'sentido')">NÃO</button>
+    </div>
+
+    <div id="sentido" class="question hidden">
+        <p>Você consegue dar algum sentido?</p>
+        <button class="button" onclick="responder('sentido', 'sim', 'coesivos_basicos')">SIM</button>
+        <button class="button" onclick="mostrarResultado(0, 'O texto não apresenta sentido claro.')">NÃO</button>
+    </div>
+
+    <div id="coesivos_basicos" class="question hidden">
+        <p>O texto tem elementos coesivos básicos (e, com, como...)?</p>
+        <button class="button" onclick="responder('coesivos_basicos', 'sim', 'apenas_basicos')">SIM</button>
+        <button class="button" onclick="mostrarResultado(0, 'O texto não apresenta elementos coesivos básicos.')">NÃO</button>
+    </div>
+
+    <div id="apenas_basicos" class="question hidden">
+        <p>Apenas esses?</p>
+        <button class="button" onclick="mostrarResultado(40, 'O texto apresenta apenas elementos coesivos básicos.')">SIM</button>
+        <button class="button" onclick="responder('apenas_basicos', 'nao', 'repeticoes_excessivas')">NÃO</button>
+    </div>
+
+    <div id="repeticoes_excessivas" class="question hidden">
+        <p>O texto tem excessivas repetições (praticamente em toda linha)?</p>
+        <button class="button" onclick="mostrarResultado(40, 'O texto apresenta repetições excessivas.')">SIM</button>
+        <button class="button" onclick="mostrarResultado(80, 'O texto apresenta uso adequado de elementos coesivos.')">NÃO</button>
+    </div>
+
+    <div id="recuo" class="question hidden">
+        <p>O texto possui apenas um recuo ou nenhum recuo de parágrafo (tijolão)?</p>
+        <button class="button" onclick="mostrarResultado(80, 'O texto apresenta problemas de paragrafação.')">SIM</button>
+        <button class="button" onclick="responder('recuo', 'nao', 'freq_coesivos')">NÃO</button>
+    </div>
+
+    <div id="freq_coesivos" class="question hidden">
+        <p>A frequência de elementos coesivos no texto é espaçada, quase por acidente?</p>
+        <button class="button" onclick="mostrarResultado(120, 'O texto apresenta uso espaçado de elementos coesivos.')">SIM</button>
+        <button class="button" onclick="responder('freq_coesivos', 'nao', 'incomodo_repeticoes')">NÃO</button>
+    </div>
+
+    <div id="incomodo_repeticoes" class="question hidden">
+        <p>Durante a leitura do texto, você se incomoda com repetições de uma palavra ou um conectivo?</p>
+        <button class="button" onclick="mostrarResultado(80, 'O texto apresenta repetições que prejudicam muito a leitura.')">MUITO</button>
+        <button class="button" onclick="mostrarResultado(120, 'O texto apresenta algumas repetições que incomodam.')">SIM</button>
+        <button class="button" onclick="responder('incomodo_repeticoes', 'nao', 'freq_alta')">NÃO</button>
+    </div>
+
+    <div id="freq_alta" class="question hidden">
+        <p>Então, em quase toda linha o estudante trabalha com elementos coesivos (frequência alta/constante)?</p>
+        <button class="button" onclick="responder('freq_alta', 'sim', 'operador_interparagrafo')">SIM</button>
+        <button class="button" onclick="mostrarResultado(120, 'O texto não apresenta uso constante de elementos coesivos.')">NÃO</button>
+    </div>
+
+    <div id="operador_interparagrafo" class="question hidden">
+        <p>O texto possui pelo menos 1 operador argumentativo interparágrafo?</p>
+        <button class="button" onclick="responder('operador_interparagrafo', 'sim', 'repeticoes_sinonimos')">SIM</button>
+        <button class="button" onclick="mostrarResultado(120, 'O texto não apresenta operadores argumentativos entre parágrafos.')">NÃO</button>
+    </div>
+
+    <div id="repeticoes_sinonimos" class="question hidden">
+        <p>O texto possui palavras ou conjunções que se repetem mais de 2 vezes, em situações que o estudante poderia usar sinônimos - e você sente que isso atrapalha?</p>
+        <button class="button" onclick="mostrarResultado(160, 'O texto apresenta repetições que poderiam ser evitadas com sinônimos.')">SIM</button>
+        <button class="button" onclick="responder('repeticoes_sinonimos', 'nao', 'dois_operadores')">NÃO</button>
+    </div>
+
+    <div id="dois_operadores" class="question hidden">
+        <p>O texto possui pelo menos 2 operadores argumentativos interparágrafo?</p>
+        <button class="button" onclick="responder('dois_operadores', 'sim', 'inadequacao_coesiva')">SIM</button>
+        <button class="button" onclick="mostrarResultado(160, 'O texto não apresenta quantidade suficiente de operadores argumentativos entre parágrafos.')">NÃO</button>
+    </div>
+
+    <div id="inadequacao_coesiva" class="question hidden">
+        <p>O texto possui alguma inadequação coesiva?</p>
+        <button class="button" onclick="mostrarResultado(160, 'O texto apresenta algumas inadequações coesivas.')">SIM</button>
+        <button class="button" onclick="mostrarResultado(200, 'Excelente! O texto apresenta uso adequado e variado de elementos coesivos.')">NÃO</button>
+    </div>
+
+    <div id="resultado">
+        <p>Resultado: <span id="valor_resultado"></span></p>
+        <p id="comentario"></p>
+        <button class="button" onclick="reiniciar()">Recomeçar</button>
+    </div>
+
+    <script>
+        function responder(atual, resposta, proximo) {
+            document.getElementById(atual).classList.add('hidden');
+            document.getElementById(proximo).classList.remove('hidden');
+        }
+
+        function mostrarResultado(valor, comentario) {
+            document.querySelectorAll('.question').forEach(el => el.classList.add('hidden'));
+            document.getElementById('resultado').style.display = 'block';
+            document.getElementById('valor_resultado').textContent = valor;
+            document.getElementById('comentario').textContent = comentario;
+        }
+
+        function reiniciar() {
+            document.querySelectorAll('.question').forEach(el => el.classList.add('hidden'));
+            document.getElementById('resultado').style.display = 'none';
+            document.getElementById('inicio').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
